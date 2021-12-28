@@ -2,23 +2,25 @@ class Session
   attr_reader :contents
 
   def initialize
-    @contents = CSV.open 'full_event_attendees.csv', headers: true, header_converters: :symbol
+    @contents = CSV.read 'full_event_attendees.csv', headers: true, header_converters: :symbol
     headers('full_event_attendees.csv')
   end
 
   def load(file)
-    @contents = CSV.open file, headers: true, header_converters: :symbol
+    @contents = CSV.read file, headers: true, header_converters: :symbol
     headers(file)
   end
 
   def headers(file)
     headers = CSV.open(file){ |csv| csv.readline.join(",") }
+    #headers = CSV.open(file){ |csv| csv.join(",") }
     File.write('queue.csv', "#{headers}\n")
   end
 
   def find(attr, crit)
     @contents.each do |row|
-      if row[attr.to_sym].downcase == crit.downcase
+      next if row[attr.downcase.to_sym] == nil
+      if row[attr.downcase.to_sym].downcase == crit.downcase
         File.write('queue.csv', row, mode: "a")
       end
     end
@@ -29,7 +31,7 @@ class Session
   end
 
   def help(command = nil)
-    help_text = CSV.open './lib/help.csv', headers: true, header_converters: :symbol
+    help_text = CSV.read './lib/help.csv', headers: true, header_converters: :symbol
 
     if command == nil
       help_commands = []
@@ -50,7 +52,7 @@ class Session
   end
 
   def print(sort_by = nil)
-    records = CSV.open './queue.csv', headers: true, header_converters: :symbol
+    records = CSV.read './queue.csv', headers: true, header_converters: :symbol
 
     if sort_by != nil
       records = records.sort_by do |row|

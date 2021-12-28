@@ -25,24 +25,24 @@ RSpec.describe "Session" do
 
   it "starts with an empty queue" do
     session = Session.new
-    queue = CSV.open 'queue.csv', headers: true, header_converters: :symbol
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 0
   end
 
   it "finds records that match criteria" do
     session = Session.new
     session.find("first_name", "John")
-    queue = CSV.open 'queue.csv', headers: true, header_converters: :symbol
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 63
   end
 
   it "clears the queue" do
     session = Session.new
     session.find("first_name", "John")
-    queue = CSV.open 'queue.csv', headers: true, header_converters: :symbol
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 63
     session.clear
-    queue = CSV.open 'queue.csv', headers: true, header_converters: :symbol
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 0
   end
 
@@ -61,7 +61,7 @@ RSpec.describe "Session" do
     session = Session.new
     session.load('event_attendees.csv')
     session.find("first_name", "shannon")
-    queue = CSV.open 'queue.csv', headers: true, header_converters: :symbol
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(session.print).to eq("LAST NAME\tFIRST NAME\tEMAIL\tZIPCODE\tCITY\tSTATE\tADDRESS\tPHONE\nWarner\tShannon\tgkjordandc@jumpstartlab.com\t03082\tLyndeborough\tNH\t186 Crooked S Road\t(603) 305-3000\nDavis\tShannon\tltb3@jumpstartlab.com\t98122\tSeattle\tWA\tCampion 1108 914 E. Jefferson\t530-355-7000")
   end
 
@@ -69,7 +69,12 @@ RSpec.describe "Session" do
     session = Session.new
     session.load('event_attendees.csv')
     session.find("first_name", "shannon")
-    queue = CSV.open 'queue.csv', headers: true, header_converters: :symbol
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(session.print("last_name")).to eq("LAST NAME\tFIRST NAME\tEMAIL\tZIPCODE\tCITY\tSTATE\tADDRESS\tPHONE\nDavis\tShannon\tltb3@jumpstartlab.com\t98122\tSeattle\tWA\tCampion 1108 914 E. Jefferson\t530-355-7000\nWarner\tShannon\tgkjordandc@jumpstartlab.com\t03082\tLyndeborough\tNH\t186 Crooked S Road\t(603) 305-3000")
+  end
+
+  it "saves the queue to a file" do
+    session = Session.new
+    session.find("City", "Salt Lake City")
   end
 end
