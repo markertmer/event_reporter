@@ -88,4 +88,9 @@ class Session
     zip.to_s.rjust(5,"0")[0..4]
   end
 
+  def save_to(filepath, sort_by = nil)
+    table = print(sort_by)
+    File.write(filepath, table, mode: "w+")
+  end
+
 end

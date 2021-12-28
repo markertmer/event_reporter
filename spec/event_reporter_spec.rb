@@ -76,5 +76,17 @@ RSpec.describe "Session" do
   it "saves the queue to a file" do
     session = Session.new
     session.find("City", "Salt Lake City")
+    session.save_to('./lib/city_sample.csv')
+    file = File.read('./lib/city_sample.csv')
+    expect(file).to eq(session.print)
+  end
+
+  it "sorts & saves the queue" do
+    session = Session.new
+    session.find("state", "DC")
+    session.save_to('./lib/state_sample.csv', "last_name")
+    file = File.read('./lib/state_sample.csv')
+    expect(file).to eq(session.print("last_name"))
+    session.clear
   end
 end
