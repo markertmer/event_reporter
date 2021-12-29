@@ -17,13 +17,15 @@ class Session
     File.write('queue.csv', "#{headers}\n")
   end
 
-  def find(attr, crit, override = false)
+  def find(attr, override=false, *criteria)#, override = false)
     unless @contents == nil##################################
       clear if override == false
       @contents.each do |row|
         next if row[attr.downcase.to_sym] == nil
-        if row[attr.downcase.to_sym].downcase == crit.downcase
-          File.write('queue.csv', row, mode: "a")
+        criteria.each do |crit|
+          if row[attr.downcase.to_sym].downcase == crit.downcase
+            File.write('queue.csv', row, mode: "a")
+          end
         end
       end
     end
@@ -41,7 +43,7 @@ class Session
   end
 
   def add(attr, crit)
-    find(attr, crit, true)
+    find(attr, true, crit)
   end
 
   def clear

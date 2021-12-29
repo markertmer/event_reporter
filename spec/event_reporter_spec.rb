@@ -34,7 +34,7 @@ RSpec.describe "Session" do
   it "finds records that match criteria" do
     session = Session.new
     session.load
-    session.find("first_name", "John")
+    session.find("first_name", false, "John")
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 63
   end
@@ -42,25 +42,25 @@ RSpec.describe "Session" do
   it "adds or removes records that match criteria" do
     session = Session.new
     session.load
-    session.find("zipcode", "20011")
+    session.find("zipcode", false, "20011")
     session.subtract("first_name", "william")
     session.add("zipcode", "20010")
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 8
   end
 
-  xit "finds records that match multiple criteria" do
+  it "finds matches for multiple criteria for an attribute" do
     session = Session.new
     session.load
-    session.find("first_name", "John")
+    session.find("first_name", false, "Mary", "John")
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
-    expect(queue.count).to be 63
+    expect(queue.count).to be 79
   end
 
   it "clears the queue" do
     session = Session.new
     session.load
-    session.find("first_name", "John")
+    session.find("first_name", false, "John")
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 63
     session.clear
@@ -71,14 +71,14 @@ RSpec.describe "Session" do
   it "clears the queue when a new find command is run" do
     session = Session.new
     session.load
-    session.find("first_name", "John")
+    session.find("first_name", false, "John")
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 63
-    session.find("city", "Salt Lake City")
+    session.find("city", false, "Salt Lake City")
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 13
     session.load('event_attendees.csv')
-    session.find("first_name", "Shannon")
+    session.find("first_name", false, "Shannon")
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 2
   end
@@ -99,7 +99,7 @@ RSpec.describe "Session" do
   it "prints the queue in a table" do
     session = Session.new
     session.load('event_attendees.csv')
-    session.find("first_name", "shannon")
+    session.find("first_name", false, "shannon")
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(session.print).to eq("LAST NAME\tFIRST NAME\tEMAIL\tZIPCODE\tCITY\tSTATE\tADDRESS\tPHONE\nWarner\tShannon\tgkjordandc@jumpstartlab.com\t03082\tLyndeborough\tNH\t186 Crooked S Road\t(603) 305-3000\nDavis\tShannon\tltb3@jumpstartlab.com\t98122\tSeattle\tWA\tCampion 1108 914 E. Jefferson\t530-355-7000")
   end
@@ -107,7 +107,7 @@ RSpec.describe "Session" do
   it "prints the queue sorted by the chosen attribute" do
     session = Session.new
     session.load('event_attendees.csv')
-    session.find("first_name", "shannon")
+    session.find("first_name", false, "shannon")
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(session.print("last_name")).to eq("LAST NAME\tFIRST NAME\tEMAIL\tZIPCODE\tCITY\tSTATE\tADDRESS\tPHONE\nDavis\tShannon\tltb3@jumpstartlab.com\t98122\tSeattle\tWA\tCampion 1108 914 E. Jefferson\t530-355-7000\nWarner\tShannon\tgkjordandc@jumpstartlab.com\t03082\tLyndeborough\tNH\t186 Crooked S Road\t(603) 305-3000")
   end
@@ -115,7 +115,7 @@ RSpec.describe "Session" do
   it "saves the queue to a file" do
     session = Session.new
     session.load
-    session.find("City", "Salt Lake City")
+    session.find("City", false, "Salt Lake City")
     session.save_to('./lib/city_sample.csv')
     file = File.read('./lib/city_sample.csv')
     expect(file).to eq(session.print)
@@ -124,7 +124,7 @@ RSpec.describe "Session" do
   it "sorts & saves the queue" do
     session = Session.new
     session.load
-    session.find("state", "DC")
+    session.find("state", false, "DC")
     session.save_to('./lib/state_sample.csv', "last_name")
     file = File.read('./lib/state_sample.csv')
     expect(file).to eq(session.print("last_name"))
@@ -133,7 +133,7 @@ RSpec.describe "Session" do
 
   it "doesn't crash when no file loaded" do
     session = Session.new
-    session.find("last_name", "Johnson")
+    session.find("last_name", false, "Johnson")
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 0
     expect(session.print).to eq "LAST NAME\tFIRST NAME\tEMAIL\tZIPCODE\tCITY\tSTATE\tADDRESS\tPHONE\n"
