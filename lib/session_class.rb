@@ -28,7 +28,7 @@ class Session
           end
         end
       end
-      remove_duplicates
+      remove_duplicates #if override == true
     end
   end
 
@@ -47,6 +47,21 @@ class Session
   def add(attr, *criteria)
     ########################################
     find(attr, true, criteria)
+  end
+
+  def or(query)
+    clear
+    commands = query.split(" or ")
+    commands.each do |comm|
+      args = comm.split(" ")
+      attr = args[0]
+      args.shift
+      criteria = args.map { |crit| crit.delete("( )").split(",") }
+      find(attr, true, criteria)
+    end
+  end
+
+  def command_scrubber
   end
 
   def remove_duplicates

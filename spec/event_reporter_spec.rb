@@ -46,7 +46,15 @@ RSpec.describe "Session" do
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 79
   end
-  
+
+  it "finds matches using OR" do
+    session = Session.new
+    session.load
+    session.or("first_name (Mary, John) or state DC or last_name Simpson")
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
+    expect(queue.count).to be 318
+  end
+
   it "adds or removes records that match criteria" do
     session = Session.new
     session.load
