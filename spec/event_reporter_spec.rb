@@ -16,8 +16,9 @@ RSpec.describe "Session" do
     expect(session.contents.count).to be 19
   end
 
-  it "has a default file loaded" do
+  it "loads a default file" do
     session = Session.new
+    session.load
     expect(session.contents.count).to be 5175
     session.load('event_attendees.csv')
     expect(session.contents.count).to be 19
@@ -25,12 +26,22 @@ RSpec.describe "Session" do
 
   it "starts with an empty queue" do
     session = Session.new
+    session.load
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 0
   end
 
   it "finds records that match criteria" do
     session = Session.new
+    session.load
+    session.find("first_name", "John")
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
+    expect(queue.count).to be 63
+  end
+
+  it "finds records that match multiple criteria" do
+    session = Session.new
+    session.load
     session.find("first_name", "John")
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 63
@@ -38,6 +49,7 @@ RSpec.describe "Session" do
 
   it "clears the queue" do
     session = Session.new
+    session.load
     session.find("first_name", "John")
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 63
@@ -48,11 +60,13 @@ RSpec.describe "Session" do
 
   it "lists all available commands" do
     session = Session.new
+    session.load
     expect(session.help).to eq(["find","help","load","queue count","queue clear","queue export html","queue print","queue print by","queue save to","quit"])
   end
 
   it "gives a description for each command" do
     session = Session.new
+    session.load
     expect(session.help("load")).to eq("load <filename> - Loads the specified file for search operations.")
     expect(session.help("queue clear")).to eq("queue clear - Empties the queue for the next search.")
   end
@@ -75,6 +89,7 @@ RSpec.describe "Session" do
 
   it "saves the queue to a file" do
     session = Session.new
+    session.load
     session.find("City", "Salt Lake City")
     session.save_to('./lib/city_sample.csv')
     file = File.read('./lib/city_sample.csv')
@@ -83,10 +98,26 @@ RSpec.describe "Session" do
 
   it "sorts & saves the queue" do
     session = Session.new
+    session.load
     session.find("state", "DC")
     session.save_to('./lib/state_sample.csv', "last_name")
     file = File.read('./lib/state_sample.csv')
     expect(file).to eq(session.print("last_name"))
     session.clear
+  end
+
+  it "doesn't crash when no file loaded" do
+    session = Session.new
+    session.find("last_name", "Johnson")
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
+    expect(queue.count).to be 0
+    expect(session.print).to eq "LAST NAME\tFIRST NAME\tEMAIL\tZIPCODE\tCITY\tSTATE\tADDRESS\tPHONE\n"
+    session.clear #does not return an error
+    expect(session.print("last_name")).to eq "LAST NAME\tFIRST NAME\tEMAIL\tZIPCODE\tCITY\tSTATE\tADDRESS\tPHONE\n"
+    session.save_to('./lib/empty.csv')
+    file = File.read('./lib/empty.csv')
+    expect(file).to eq "LAST NAME\tFIRST NAME\tEMAIL\tZIPCODE\tCITY\tSTATE\tADDRESS\tPHONE\n"
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
+    expect(queue.count).to be 0
   end
 end

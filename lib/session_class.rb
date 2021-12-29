@@ -2,11 +2,11 @@ class Session
   attr_reader :contents
 
   def initialize
-    @contents = CSV.read 'full_event_attendees.csv', headers: true, header_converters: :symbol
-    headers('full_event_attendees.csv')
+    # @contents = CSV.read 'full_event_attendees.csv', headers: true, header_converters: :symbol
+    # headers('full_event_attendees.csv')
   end
 
-  def load(file)
+  def load(file = 'full_event_attendees.csv')
     @contents = CSV.read file, headers: true, header_converters: :symbol
     headers(file)
   end
@@ -18,12 +18,24 @@ class Session
   end
 
   def find(attr, crit)
-    @contents.each do |row|
-      next if row[attr.downcase.to_sym] == nil
-      if row[attr.downcase.to_sym].downcase == crit.downcase
-        File.write('queue.csv', row, mode: "a")
+    unless @contents == nil##################################
+      @contents.each do |row|
+        next if row[attr.downcase.to_sym] == nil
+        if row[attr.downcase.to_sym].downcase == crit.downcase
+          File.write('queue.csv', row, mode: "a")
+        end
       end
     end
+  end
+
+  def subtract(attr, crit)
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
+    clear
+    queue.each do |row|
+
+    end
+
+
   end
 
   def clear
@@ -92,5 +104,4 @@ class Session
     table = print(sort_by)
     File.write(filepath, table, mode: "w+")
   end
-
 end
