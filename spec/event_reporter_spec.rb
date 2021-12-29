@@ -39,6 +39,14 @@ RSpec.describe "Session" do
     expect(queue.count).to be 63
   end
 
+  it "finds matches for multiple criteria" do
+    session = Session.new
+    session.load
+    session.find("first_name", false, "Mary", "John")
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
+    expect(queue.count).to be 79
+  end
+  
   it "adds or removes records that match criteria" do
     session = Session.new
     session.load
@@ -56,15 +64,15 @@ RSpec.describe "Session" do
     session.subtract("first_name", "william", "maura")
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 2
-    #session.add("zipcode", "20010")
   end
 
-  it "finds matches for multiple criteria for an attribute" do
+  it "adds records that match multiple criteria" do
     session = Session.new
     session.load
-    session.find("first_name", false, "Mary", "John")
+    session.find("zipcode", false, "20011")
+    session.add("first_name", "william", "lindsay")
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
-    expect(queue.count).to be 79
+    expect(queue.count).to be 30
   end
 
   it "clears the queue" do

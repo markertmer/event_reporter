@@ -22,12 +22,13 @@ class Session
       clear if override == false
       @contents.each do |row|
         next if row[attr.downcase.to_sym] == nil
-        criteria.each do |crit|
+        criteria.flatten.each do |crit|
           if row[attr.downcase.to_sym].downcase == crit.downcase
             File.write('queue.csv', row, mode: "a")
           end
         end
       end
+      remove_duplicates
     end
   end
 
@@ -43,8 +44,21 @@ class Session
     end
   end
 
-  def add(attr, crit)
-    find(attr, true, crit)
+  def add(attr, *criteria)
+    ########################################
+    find(attr, true, criteria)
+  end
+
+  def remove_duplicates
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
+    clear
+    comparison = []
+    queue.each do |row|
+      unless comparison.include?(row)
+        File.write('queue.csv', row, mode: "a")
+        comparison << row
+      end
+    end
   end
 
   def clear
