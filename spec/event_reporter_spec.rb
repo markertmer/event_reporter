@@ -47,7 +47,6 @@ RSpec.describe "Session" do
     session.add("zipcode", "20010")
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 8
-    binding.pry
   end
 
   xit "finds records that match multiple criteria" do
@@ -67,6 +66,21 @@ RSpec.describe "Session" do
     session.clear
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     expect(queue.count).to be 0
+  end
+
+  it "clears the queue when a new find command is run" do
+    session = Session.new
+    session.load
+    session.find("first_name", "John")
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
+    expect(queue.count).to be 63
+    session.find("city", "Salt Lake City")
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
+    expect(queue.count).to be 13
+    session.load('event_attendees.csv')
+    session.find("first_name", "Shannon")
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
+    expect(queue.count).to be 2
   end
 
   it "lists all available commands" do
