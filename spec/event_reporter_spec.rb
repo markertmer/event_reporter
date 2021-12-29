@@ -49,6 +49,16 @@ RSpec.describe "Session" do
     expect(queue.count).to be 8
   end
 
+  it "removes records that match multiple criteria" do
+    session = Session.new
+    session.load
+    session.find("zipcode", false, "20011")
+    session.subtract("first_name", "william", "maura")
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
+    expect(queue.count).to be 2
+    #session.add("zipcode", "20010")
+  end
+
   it "finds matches for multiple criteria for an attribute" do
     session = Session.new
     session.load

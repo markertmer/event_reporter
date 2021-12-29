@@ -17,7 +17,7 @@ class Session
     File.write('queue.csv', "#{headers}\n")
   end
 
-  def find(attr, override=false, *criteria)#, override = false)
+  def find(attr, override, *criteria)#, override = false)
     unless @contents == nil##################################
       clear if override == false
       @contents.each do |row|
@@ -31,12 +31,13 @@ class Session
     end
   end
 
-  def subtract(attr, crit)
+  def subtract(attr, *criteria)
     ########################################
     queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
     clear
+    criteria = criteria.each { |crit| crit.downcase }
     queue.each do |row|
-      unless row[attr.downcase.to_sym].downcase == crit.downcase
+      unless criteria.include?(row[attr.downcase.to_sym].downcase)# == crit.downcase
         File.write('queue.csv', row, mode: "a")
       end
     end
