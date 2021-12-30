@@ -1,5 +1,5 @@
-command,parameters,description
-find,<attribute> <criteria>,Returns all records whose specified attribute (such as FIRST NAME or ZIPCODE) matches the given criteria (like John or 90210).
+command,parameters,description,example
+find,<attribute> <criteria>,Returns all records whose specified attribute (such as FIRST NAME or ZIPCODE) matches the given criteria (like John or 90210). Multiple criteria can be used. There are also and/or operators to help refine your search.
 help,<command>,Outputs a description of the specified command. Entering 'help' without a command will output a list of all commands available within the Event Reporter program.
 load,<filename>,Loads the specified file for search operations.
 queue count,,Gives the number of records in the current queue.
@@ -8,4 +8,5 @@ queue export html,<filename.csv??>,Exports the current queue as a valid HTML fil
 queue print,,Prints a tab-delimited data table of all records in the current queue.
 queue print by,<attribute>,"Prints a tab-delimited data table of all records in the current queue, sorted by the specified attribute (like LAST NAME or ZIPCODE)."
 queue save to,<filename.csv>,Exports the current queue to a CSV file with the specified name and filepath. Naming a file without a path will save to the main directory of the repo.
+queue find,<attribute><criteria>,Returns all matching records in the queue. Multiple criteria can be used.
 quit,,Exits the Event Reporter program.

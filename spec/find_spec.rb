@@ -1,8 +1,9 @@
-require 'csv'
-require './lib/session_class'
 require 'pry'
+require 'csv'
+require './lib/queue_module.rb'
+require './lib/find_class'
 
-RSpec.describe "Session" do
+RSpec.describe "Find" do
   it "exists" do
     session = Session.new
   end
