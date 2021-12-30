@@ -12,9 +12,9 @@ class Session
   end
 
   def headers(file)
-    headers = CSV.open(file){ |csv| csv.readline.join(",") }
+    header_row = CSV.open(file){ |csv| csv.readline.join(",") }
     #headers = CSV.open(file){ |csv| csv.join(",") }
-    File.write('queue.csv', "#{headers}\n")
+    File.write('queue.csv', "#{header_row}\n")
   end
 
   def find(attr, override, *criteria)#, override = false)
@@ -22,7 +22,7 @@ class Session
       clear if override == false
       @contents.each do |row|
         next if row[attr.downcase.to_sym] == nil
-        criteria.flatten.each do |crit|
+        criteria.flatten.each do |crit|  #criteria.select
           if row[attr.downcase.to_sym].downcase == crit.downcase
             File.write('queue.csv', row, mode: "a")
           end
@@ -58,6 +58,45 @@ class Session
       args.shift
       criteria = args.map { |crit| crit.delete("( )").split(",") }
       find(attr, true, criteria)
+    end
+  end
+
+  def and(query)
+    clear
+    search_params = {}
+    commands = query.split(" and ")
+    commands.each do |comm|
+      args = comm.split(" ")
+      attr = args[0]
+      args.shift
+      criteria = args.map { |crit| crit.delete("( )").split(",") }
+      search_params[attr] = criteria
+    end
+    search_params.each do |attr, crit|  #criteria.select
+      queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
+      if queue.count == 0
+        find(attr, true, crit)
+      else
+        clear
+        queue.each do |row|
+          crit.each do |cri|
+            if cri.join.downcase == row[attr.downcase.to_sym].downcase
+              File.write('queue.csv', row, mode: "a")
+            end
+          end
+        end
+      end
+    end
+  end
+
+  def queue_find(attr, *criteria)
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
+    clear
+    criteria = criteria.each { |crit| crit.downcase }
+    queue.each do |row|
+      if criteria.include?(row[attr.downcase.to_sym].downcase)# == crit.downcase
+        File.write('queue.csv', row, mode: "a")
+      end
     end
   end
 
@@ -101,7 +140,7 @@ class Session
     end
   end
 
-  def print(sort_by = nil)
+  def print(sort_by = nil)#RENAME print!
     records = CSV.read './queue.csv', headers: true, header_converters: :symbol
 
     if sort_by != nil
@@ -109,9 +148,14 @@ class Session
         row[sort_by.to_sym]
       end
     end
-
+#CSV.open(filename, "wb") do |csv|
+#csv << ['LAST NAME'...]
+#queue.each do |row|
+#csv << row.valuses_at(...)
+#end
+#end
     rows = records.map do |row|
-      row[:last_name] + "\t" +
+      row[:last_name] + "\t" +#row.value_at(3, 2, 4, 9, 7, 8, 6, 5)
       row[:first_name] + "\t" +
       row[:email_address] + "\t" +
       clean_zipcode(row[:zipcode]) + "\t" +

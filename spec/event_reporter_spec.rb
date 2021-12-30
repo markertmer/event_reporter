@@ -55,6 +55,23 @@ RSpec.describe "Session" do
     expect(queue.count).to be 318
   end
 
+  it "finds matches using AND" do
+    session = Session.new
+    session.load
+    session.and("state (DC, VA, MD) and last_name johnson and first_name ben")
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
+    expect(queue.count).to be 1
+  end
+
+  it "searches the queue" do
+    session = Session.new
+    session.load
+    session.or("state dc or last_name smith")
+    session.queue_find("first_name", "alicia", "scott")
+    queue = CSV.read 'queue.csv', headers: true, header_converters: :symbol
+    expect(queue.count).to be 4
+  end
+
   it "adds or removes records that match criteria" do
     session = Session.new
     session.load
