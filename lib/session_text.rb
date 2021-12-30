@@ -5,12 +5,14 @@ class SessionText
   :file_loaded,
   :find_reminder,
   :file_reminder,
-  :queue_report,
+  :search_report,
   :queue_reminder,
   :no_such_file,
   :no_such_command,
   :no_file_loaded,
-  :no_search_criteria
+  :no_search_criteria,
+  :no_spaces,
+  :and_or_or_not_and_and_or
 
   def initialize
     @title_screen = "
@@ -47,5 +49,8 @@ Enter 'queue clear' to begin a new search.\n"
 
     @no_search_criteria = "\nYou must include search criteria with the 'find' command. Enter 'help find' for more info.\n"
 
+    @no_spaces = "\nMake sure to include spaces between each word of your input!\n"
+
+    @and_or_or_not_and_and_or = "\nThe 'and' and 'or' operators cannot be used in the same 'find' command.\n"
   end
 end

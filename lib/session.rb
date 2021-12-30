@@ -90,22 +90,32 @@ module Session
 
   def find_filter(input)
     query = input.split(" ").slice(1..-1).join(" ")
-    if @find == nil
+    if !input.include?(" ")
+      puts @text.no_spaces
+    elsif @find == nil
       puts @text.no_file_loaded
     elsif input == "find"
       puts @text.no_search_criteria
+    elsif input.include?(" or ") && input.include?(" and ")
+      puts @text.and_or_or_not_and_and_or
     elsif input.include?(" or ")
       @find.or(query)
+      puts "\n" + queue_count.to_s + @text.search_report
+      #sleep 2
+      puts @text.queue_reminder
     elsif input.include?(" and ")
       @find.and(query)
+      puts "\n" + queue_count.to_s + @text.search_report
+      #sleep 2
+      puts @text.queue_reminder
     else
       criteria = query.split(" ")
       attr = criteria.shift
       @find.find(attr, false, criteria)
+      puts "\n" + queue_count.to_s + @text.search_report
+      #sleep 2
+      puts @text.queue_reminder
     end
-    puts "\n" + queue_count.to_s + @text.queue_report
-    #sleep 2
-    puts @text.queue_reminder
     command_router
   end
 end

@@ -88,8 +88,6 @@ module QueueOps
     queue.count
   end
 
-
-
   def save_to(filepath, sort_by = nil)
     table = print(sort_by)
     File.write(filepath, table, mode: "w+")
