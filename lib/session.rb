@@ -1,9 +1,11 @@
 require './lib/session_text.rb'
 require './lib/find_class.rb'
+require './lib/queue_module.rb'
 require 'pry'
 require 'csv'
 
 module Session
+  include QueueOps
 
   def start
     @text = SessionText.new
@@ -87,5 +89,23 @@ module Session
   end
 
   def find_filter(input)
-    
+    query = input.split(" ").slice(1..-1).join(" ")
+    if @find == nil
+      puts @text.no_file_loaded
+    elsif input == "find"
+      puts @text.no_search_criteria
+    elsif input.include?(" or ")
+      @find.or(query)
+    elsif input.include?(" and ")
+      @find.and(query)
+    else
+      criteria = query.split(" ")
+      attr = criteria.shift
+      @find.find(attr, false, criteria)
+    end
+    puts "\n" + queue_count.to_s + @text.queue_report
+    #sleep 2
+    puts @text.queue_reminder
+    command_router
+  end
 end

@@ -1,4 +1,6 @@
 require './lib/find_class'
+require 'csv'
+require 'pry'
 
 module QueueOps
   def headers(file)
@@ -80,6 +82,13 @@ module QueueOps
   def clean_zipcode(zip)
     zip.to_s.rjust(5,"0")[0..4]
   end
+
+  def queue_count
+    queue = CSV.open './queue.csv', headers: true, header_converters: :symbol
+    queue.count
+  end
+
+
 
   def save_to(filepath, sort_by = nil)
     table = print(sort_by)

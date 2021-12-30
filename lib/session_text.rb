@@ -8,7 +8,9 @@ class SessionText
   :queue_report,
   :queue_reminder,
   :no_such_file,
-  :no_such_command
+  :no_such_command,
+  :no_file_loaded,
+  :no_search_criteria
 
   def initialize
     @title_screen = "
@@ -40,5 +42,10 @@ Enter 'queue clear' to begin a new search.\n"
     @no_such_file = " is not a file. Make sure to include a valid filename and path.\n"
 
     @no_such_command = " is not a valid command. Enter 'help' to see a list of all available commands.\n"
+
+    @no_file_loaded = "\nNo file loaded. You must load a file before running 'find' commands.\n"
+
+    @no_search_criteria = "\nYou must include search criteria with the 'find' command. Enter 'help find' for more info.\n"
+
   end
 end
