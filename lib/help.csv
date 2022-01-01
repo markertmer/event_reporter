@@ -1,12 +1,14 @@
-command,parameters,description,example
-find,<attribute> <criteria>,Returns all records whose specified attribute (such as FIRST NAME or ZIPCODE) matches the given criteria (like John or 90210). Multiple criteria can be used. There are also and/or operators to help refine your search.
-help,<command>,Outputs a description of the specified command. Entering 'help' without a command will output a list of all commands available within the Event Reporter program.
-load,<filename>,Loads the specified file for search operations.
+command,parameters,description,examples
+attributes,,Displays a list of all attributes that can be used to search for records in the loaded CSV file.
+find,<attribute> <criteria>,Returns all records whose specified attribute (such as FIRST NAME or ZIPCODE) matches the given criteria (like John or 90210). Multiple criteria can be used. There are also 'and/or' operators to help refine your search.,find first_name John\nfind first_name John Sarah\nfind first_name John and state DC\nfind first_name John Sarah Tom or state DC VA MD\nfind first_name John Sarah Tom and state DC VA
+help,<command>,Outputs a description of the specified command. Entering 'help' without a command will output a list of all commands available within the Event Reporter program.,help load\nhelp queue count\nhelp print by
+load,<filename>,Loads the specified file for search operations.,load file.csv\nload ./lib/file.csv
+queue add,<attribute> <criteria>,Adds matching records to the queue. Multiple criteria can be used.,queue add zipcode 20010\nqueue add city Baltimore Seattle
 queue count,,Gives the number of records in the current queue.
 queue clear,,Empties the queue for the next search.
-queue export html,<filename.csv??>,Exports the current queue as a valid HTML file.
 queue print,,Prints a tab-delimited data table of all records in the current queue.
-queue print by,<attribute>,"Prints a tab-delimited data table of all records in the current queue, sorted by the specified attribute (like LAST NAME or ZIPCODE)."
-queue save to,<filename.csv>,Exports the current queue to a CSV file with the specified name and filepath. Naming a file without a path will save to the main directory of the repo.
-queue find,<attribute><criteria>,Returns all matching records in the queue. Multiple criteria can be used.
+queue print by,<attribute>,"Prints a tab-delimited data table of all records in the current queue, sorted by the specified attribute (like LAST NAME or ZIPCODE).",queue print by last_name
+queue save to,<filename.csv>,Exports the current queue to a CSV file with the specified name and filepath. Naming a file without a path will save to the main directory of the repo.,queue save to file.csv\nqueue save to ./lib/file.csv
+queue subtract,<attribute> <criteria>,Removes matching records from the queue. Multiple criteria can be used.,queue subtract first_name John\nqueue subtract state DC CA
+queue find,<attribute> <criteria>,Returns all matching records in the queue. Multiple criteria can be used.,queue find city Baltimore\nqueue find state DC CA VA
 quit,,Exits the Event Reporter program.

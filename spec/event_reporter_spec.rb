@@ -1,5 +1,5 @@
 require 'csv'
-require './lib/session_class'
+require './spec/test_methods'
 require 'pry'
 
 RSpec.describe "Session" do
@@ -126,7 +126,7 @@ RSpec.describe "Session" do
   it "lists all available commands" do
     session = Session.new
     session.load
-    expect(session.help).to eq(["find","help","load","queue count","queue clear","queue export html","queue print","queue print by","queue save to", "queue find", "quit"])
+    expect(session.help).to eq(["attributes", "find", "help", "load", "queue add", "queue count", "queue clear", "queue print", "queue print by", "queue save to", "queue subtract", "queue find", "quit"])
   end
 
   it "gives a description for each command" do

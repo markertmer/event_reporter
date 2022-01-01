@@ -56,6 +56,7 @@ class Find
       else
         clear
         queue.each do |row|
+          next if row[attr.downcase.to_sym] == nil
           crit.each do |cri|
             if cri.join.downcase == row[attr.downcase.to_sym].downcase
               File.write('queue.csv', row, mode: "a")
